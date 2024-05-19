@@ -1,0 +1,44 @@
+
+.button-custom {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #4400ff;
+    border-radius: 4px;
+    color: white; 
+    border: none;
+}
+
+
+.button-custom:hover {
+    background-color: #6200ff;
+}
+
+a.button-secondary {
+    margin-top: 30px;
+    padding: 10px 20px;
+    background-color: #ff8800;
+    border-radius: 4px;
+    color: white; 
+    border: none;
+}
+
+
+a.button-secondary:hover {
+    background-color: #ff5100;
+    color: white;
+}
+
+.vh-100 {
+    background-color: #ff5100;
+    color: rgb(36, 36, 36);
+}
+
+.table {
+    background-color: #f5f3f3;
+    margin-top: 18px;
+    border-radius: 8px 8px 8px 8px;    
+}
+.text-left {
+    margin-top: 40px;
+}
+

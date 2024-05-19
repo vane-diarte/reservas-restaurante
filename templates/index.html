@@ -1,0 +1,118 @@
+{% extends './layout.html' %}
+{% block title %} Index {% endblock %}
+{% block body %}
+    <section class="vh-100" style="background-color: #eee;">
+        <div class="container-xxl py-2 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col col-lg-8 col-xl-8">
+                    <div class="card rounded-3">
+                        <div class="card-body p-4">
+
+                            <!-- Titulo -->
+                            <h4 class="text-left my-3 pb-3">Reserva tu mesa</h4>
+                            <h6 class="text-left my-3 pb-3">Capacidad del restaurante: 6 mesas</h6>
+
+
+                            <!-- formulario -->
+                            <form class="row" action="/add" method="post">
+
+                                <!-- numero de mesa -->
+                                <div class="col-3">
+                                    <div class="form-outline">
+                                        <label for="mesa" class="form-label">Numero de Mesa</label>
+                                        <input type="text" id="mesa" name="mesa" class="form-control" placeholder="XX">
+                                    </div>
+                                </div>
+
+                                <!-- nombre -->
+                                <div class="col-3">
+                                    <div class="form-outline">
+                                        <label for="username" class="form-label">Nombre</label>
+                                        <input type="text" id="username" name="username" class="form-control" placeholder="Escribe tu nombre">
+                                    </div>
+                                </div>
+
+                                 <!-- cantidad de personas -->
+                                 <div class="col-3">
+                                    <div class="form-outline">
+                                        <label for="cantidad_personas" class="form-label">Cantidad de Personas</label>
+                                        <input type="text" id="cantidad_personas" name="cantidad_personas" class="form-control" placeholder="XX">
+                                    </div>
+                                </div>
+                                <!-- fecha de reserva -->
+                                <div class="col-3">
+                                    <div class="form-outline">
+                                        <label for="fecha_reserva" class="form-label">Fecha</label>
+                                        <input type="date" id="fecha_reserva" name="fecha_reserva" class="form-control custom-date-input">
+                                    </div>
+                                </div>
+
+                                <!-- boton guardar -->
+                                <div class="col-6">
+                                    <button type="submit" class="button-custom">Reservar Mesa</button>
+                                </div>
+
+                            </form>
+
+                            <table class="table mb-4">
+                                <thead>
+                                <h4 class="text-left">Mesas Reservadas</h4>
+
+                                    <tr>
+                                        <th scope="col">Numero de Mesa</th>
+                                        <th scope="col">Nombre del Usuario</th>
+                                        <th scope="col">Cantidad de Personas</th>
+                                                                               
+
+                                    </tr>
+                                </thead>
+
+                                <!-- listar los datos de la reserva  -->
+
+                                <tbody>
+                                    {% for reserva in reservas %}
+                                    <tr>
+                                        <th scope="row">{{reserva.mesa}}</th>
+                                        <th scope="row">{{reserva.username}}</th>
+                                        <th scope="row">{{reserva.cantidad_personas}}</th>
+                                        
+                                        
+                                
+                                        <!-- enlaces para modificar y eliminar  -->
+                                        <td>
+                                            <a class="btn btn-success" href="/modificar/{{reserva.id}}">Modificar</a>
+                                            <a class="btn btn-danger ms-1" href="/eliminar/{{reserva.id}}" onclick="return confirm('¿Estás seguro de que deseas eliminar esta reserva?');">Eliminar</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div id="get_flashed_messages">
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dimissible alert-fixed fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+
+
+{% endblock %}
