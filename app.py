@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 import secrets
+from datetime import datetime
 
 app = Flask (__name__)
 
@@ -16,16 +17,16 @@ db = SQLAlchemy(app)
 
 class Reserva(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
     mesa = db.Column(db.Integer, unique=False, nullable=False)
+    username = db.Column(db.String(80), unique=True, nullable=False)
     cantidad_personas = db.Column(db.Integer, unique=False, nullable=False)
     """ fecha_reserva = db.Column(db.Date, nullable=False) """
    
     
-    def __init__(self, username, mesa, cantidad_personas):
+    def __init__(self, mesa, username, cantidad_personas):
        
-        self.username = username
         self.mesa = mesa
+        self.username = username
         self.cantidad_personas = cantidad_personas
 
 
@@ -45,7 +46,7 @@ def add():
     """ fecha_reserva = request.form.get("fecha_reserva") """
     
 
-    if username and cantidad_personas and mesa:
+    if mesa and username and cantidad_personas:
         try:
             cantidad_personas = int(cantidad_personas)
             mesa = int(mesa)
@@ -65,33 +66,33 @@ def add():
                 flash("El nombre de usuario ya ha sido utilizado para una reserva, ingrese otro nombre", "danger")
                 return redirect(url_for("index"))
             
-                        
-            nueva_reserva = Reserva (username=username, cantidad_personas=cantidad_personas, mesa=mesa)
+            nueva_reserva = Reserva (mesa, username, cantidad_personas)
             db.session.add(nueva_reserva)
             db.session.commit()
             flash("Reserva agregada con éxito.", "success")
+            return redirect(url_for("index"))
+               
         except ValueError:
             flash("Cantidad de personas y mesa deben ser números enteros.", "danger")
+            return redirect(url_for("index"))
+            
     else:
         flash("Todos los campos son obligatorios.", "danger")
-
-    return redirect(url_for("index"))
+        return redirect(url_for("index"))
 
     
 
 """ modificar reserva """
 @app.route("/modificar/<int:reserva_id>", methods=["POST", "GET"])
 def modificar(reserva_id):
-    mesa = request.form.get ("mesa")
-    username = request.form.get ("username")
-    cantidad_personas = request.form.get ("cantidad_personas")
-    reserva = db.session.query(Reserva).filter(Reserva.id == reserva_id).first()
+    
+    reserva = Reserva.query.get(reserva_id)
     
     
     if request.method == 'POST':
-        reserva.username = request.form ["username"]
-        reserva.mesa = request.form ["mesa"]
-        reserva.cantidad_personas = request.form ["cantidad_personas"]
+        mesa = request.form.get ("mesa")
+        username = request.form.get ("username")
+        cantidad_personas = request.form.get ("cantidad_personas")
         
         if username and mesa and cantidad_personas:
             try:
@@ -112,10 +113,16 @@ def modificar(reserva_id):
                 if reserva_existe:
                     flash("El nombre de usuario ya ha sido utilizado para una reserva, ingrese otro nombre", "danger")
                     return render_template("update.html", reserva=reserva)
-               
+                
+                # Actualizar los atributos de la reserva con los nuevos valores
+                reserva.mesa = mesa
+                reserva.username = username
+                reserva.cantidad_personas = cantidad_personas
+                
                 db.session.commit()
                 flash("Reserva modificada con éxito.", "success")
                 return redirect(url_for("index"))
+            
             except ValueError:
                 flash("Cantidad de personas y mesa deben ser números enteros.", "danger")
                 return render_template("update.html", reserva=reserva)
@@ -125,7 +132,7 @@ def modificar(reserva_id):
 
         
         
-        
+    reserva = Reserva.query.get(reserva_id)        
     return render_template ("update.html", reserva = reserva)
 
 
@@ -138,9 +145,6 @@ def eliminar(reserva_id):
     return redirect(url_for("index"))
 
 
-if __name__=='__main__':
-    with app.app_context():
-        db.create_all()
-    app.run(debug=True)
+
 
 
