@@ -2,9 +2,9 @@
 {% block title %} Modificar {% endblock %}
 {% block body %}
 <section class="vh-100" style="background-color: #eee;">
-    <div class="container py-5 h-100">
+    <div class="container-xxl py-2 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col col-lg-9 col-xl-7">
+            <div class="col col-lg-8 col-xl-8">
                 <div class="card rounded-3">
                     <div class="card-body p-4">
 
@@ -15,15 +15,15 @@
                         <form class="row" action="/modificar/{{reserva.id}}" method="POST">
 
                             <!-- numero de mesa -->
-                            <div class="col-4">
+                            <div class="col-3">
                                 <div class="form-outline">
-                                    <label for="mesa" class="form-label">Numero de mesa</label>
+                                    <label for="mesa" class="form-label">Mesa N°</label>
                                     <input type="text" id="mesa" name="mesa" class="form-control" placeholder="XX" value="{{reserva.mesa}}">
                                 </div>
                             </div>
 
                             <!-- nombre -->
-                            <div class="col-4">
+                            <div class="col-3">
                                 <div class="form-outline">
                                     <label for="username" class="form-label">Nombre</label>
                                     <input type="text" id="username" name="username" class="form-control" placeholder="Escribe tu nombre" value="{{reserva.username}}">
@@ -31,10 +31,18 @@
                             </div>
 
                              <!-- cantidad de personas -->
-                             <div class="col-4">
+                             <div class="col-3">
                                 <div class="form-outline">
                                     <label for="cantidad_personas" class="form-label">Cantidad de personas</label>
                                     <input type="text" id="cantidad_personas" name="cantidad_personas" class="form-control" placeholder="XX" value="{{reserva.cantidad_personas}}">
+                                </div>
+                            </div>
+
+                            <!-- fecha de reserva -->
+                            <div class="col-3">
+                                <div class="form-outline">
+                                    <label for="fecha_reserva" class="form-label">Fecha</label>
+                                    <input type="date" id="fecha_reserva" name="fecha_reserva" class="form-control custom-date-input" value="{{ reserva.fecha_reserva }}" required>
                                 </div>
                             </div>
 

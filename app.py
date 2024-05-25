@@ -20,14 +20,15 @@ class Reserva(db.Model):
     mesa = db.Column(db.Integer, unique=False, nullable=False)
     username = db.Column(db.String(80), unique=True, nullable=False)
     cantidad_personas = db.Column(db.Integer, unique=False, nullable=False)
-    """ fecha_reserva = db.Column(db.Date, nullable=False) """
+    fecha_reserva = db.Column(db.Date, nullable=False)
    
     
-    def __init__(self, mesa, username, cantidad_personas):
+    def __init__(self, mesa, username, cantidad_personas, fecha_reserva):
        
         self.mesa = mesa
         self.username = username
         self.cantidad_personas = cantidad_personas
+        self.fecha_reserva = fecha_reserva
 
 
 
@@ -43,21 +44,23 @@ def add():
     mesa = request.form.get ("mesa")
     username = request.form.get ("username")
     cantidad_personas = request.form.get ("cantidad_personas")
-    """ fecha_reserva = request.form.get("fecha_reserva") """
+    fecha_reserva = request.form.get("fecha_reserva")
     
 
-    if mesa and username and cantidad_personas:
+    if mesa and username and cantidad_personas and fecha_reserva:
         try:
             cantidad_personas = int(cantidad_personas)
             mesa = int(mesa)
+            fecha_reserva = datetime.strptime(fecha_reserva, '%Y-%m-%d').date()  # Convertir a fecha
+            
             if mesa > 6:
                 flash("Número de mesa no válido, ingrese un numero del 1 al 6", "danger")
                 return redirect(url_for("index"))
             
-            # Comprobar si la mesa ya está reservada
-            mesa_reservada = Reserva.query.filter_by(mesa=mesa).first()
+            # Comprobar si la mesa ya está reservada para esa fecha
+            mesa_reservada = Reserva.query.filter_by(mesa=mesa, fecha_reserva=fecha_reserva).first()
             if mesa_reservada:
-                flash("La mesa ya está reservada.", "danger")
+                flash("La mesa ya está reservada para esta fecha.", "danger")
                 return redirect(url_for("index"))
             
             # Verificar si el username ya está en uso
@@ -66,7 +69,7 @@ def add():
                 flash("El nombre de usuario ya ha sido utilizado para una reserva, ingrese otro nombre", "danger")
                 return redirect(url_for("index"))
             
-            nueva_reserva = Reserva (mesa, username, cantidad_personas)
+            nueva_reserva = Reserva (mesa, username, cantidad_personas, fecha_reserva)
             db.session.add(nueva_reserva)
             db.session.commit()
             flash("Reserva agregada con éxito.", "success")
@@ -93,19 +96,22 @@ def modificar(reserva_id):
         mesa = request.form.get ("mesa")
         username = request.form.get ("username")
         cantidad_personas = request.form.get ("cantidad_personas")
+        fecha_reserva = request.form.get("fecha_reserva")
         
-        if username and mesa and cantidad_personas:
+        if username and mesa and cantidad_personas and fecha_reserva:
             try:
                 cantidad_personas = int(cantidad_personas)
                 mesa = int(mesa)
+                fecha_reserva = datetime.strptime(fecha_reserva, '%Y-%m-%d').date()  # Convertir a fecha
+                
                 if mesa > 6:
                     flash("Número de mesa no válido, ingrese un numero del 1 al 6.", "danger")
                     return render_template("update.html", reserva=reserva)
                 
-                # Comprobar si la mesa ya está reservada
-                mesa_reservada = Reserva.query.filter(Reserva.mesa == mesa, Reserva.id != reserva_id).first()
+                # Comprobar si la mesa ya está reservada para esa fecha
+                mesa_reservada = Reserva.query.filter(Reserva.mesa == mesa, Reserva.fecha_reserva == fecha_reserva, Reserva.id != reserva_id).first()
                 if mesa_reservada:
-                    flash("La mesa ya está reservada.", "danger")
+                    flash("La mesa ya está reservada para esta fecha.", "danger")
                     return render_template("update.html", reserva=reserva)
                 
                 # Verificar si el username ya está en uso
@@ -118,6 +124,7 @@ def modificar(reserva_id):
                 reserva.mesa = mesa
                 reserva.username = username
                 reserva.cantidad_personas = cantidad_personas
+                reserva.fecha_reserva = fecha_reserva
                 
                 db.session.commit()
                 flash("Reserva modificada con éxito.", "success")
