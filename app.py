@@ -53,8 +53,8 @@ def add():
             mesa = int(mesa)
             fecha_reserva = datetime.strptime(fecha_reserva, '%Y-%m-%d').date()  # Convertir a fecha
             
-            if mesa > 6:
-                flash("Número de mesa no válido, ingrese un numero del 1 al 6", "danger")
+            if mesa > 10:
+                flash("Número de mesa no válido, ingrese un numero del 1 al 10", "danger")
                 return redirect(url_for("index"))
             
             # Comprobar si la mesa ya está reservada para esa fecha
